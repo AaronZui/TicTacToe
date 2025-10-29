@@ -22,6 +22,8 @@ int main()
     cout << "Welcome to TicTacToe";
     while (playing == true)
     {
+        moves.clear();
+        current.reset();
     cout<< endl<<"Would you like to play normal or battle mode \n1.Regular \n2.Battle";
     while (true)
     {
@@ -29,15 +31,15 @@ int main()
         getline(cin, mode);
         if(mode == "1" || mode == "Regular" || mode == "regular" || mode == "r" || mode == "R" || mode == "2" || mode == "Battle" || mode == "battle" ||mode == "b" || mode == "B")
         {break;}
-        else{"Invalid input try again";}
+        else{cout<<endl<<"Invalid input try again";}
     }
     if (mode == "1" || mode == "Regular" || mode == "regular" || mode == "r" || mode == "R")
     {
         current.p1set('X');
         current.p2set('O');
 
-    
-        current.reset();
+        
+        
         while (current.winner == '0') 
         {
             current.display();
@@ -59,6 +61,8 @@ int main()
                     current.set(cmove);
                     moves += cmove;
                     cmove.clear();
+                    current.checkWin();
+                    current.display();
                     break;
                 }
                 else {
@@ -102,7 +106,7 @@ int main()
         getline(cin, sym1);
         if (sym1.length()==1)
         {
-            current.p2set(sym1[0]);
+            current.p1set(sym1[0]);
             break;
         }
     }
@@ -145,7 +149,7 @@ int main()
             archetype2 = "2";
             break;
         }
-        cout<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl;
+        cout<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl;
         }
     while (current.winner == '0') 
         {
