@@ -79,7 +79,7 @@ int main()
         {
             cout << "Player " << (current.winner == 'X' ? "1" : "2") << " wins!" << endl;
         }
-        cout<<"Would you like to play again? \n1.yes \n2.no";
+        cout<<"Would you like to play again? \n1.yes \n2.no"<<endl;
         while(true)
         {
         cin>>ws;
@@ -109,6 +109,7 @@ int main()
             current.p1set(sym1[0]);
             break;
         }
+        else {cout<<endl<<"invalid try again"<<endl;}
     }
     cout<<endl<<"player 2 select symbol"<<endl;
     while (true)
@@ -119,8 +120,9 @@ int main()
         {
             current.p2set(sym2[0]);
             break;
-
         }
+        else {cout<<endl<<"invalid try again"<<endl;}
+
     }
     cout<< "player 1 select archetype (Paladin or Alchemist)"<<endl;
     while (true){
@@ -135,8 +137,9 @@ int main()
             archetype1 = "2";
             break;
         }
+        else{cout<<endl<<"Invalid archetype try again";}
     }
-    cout<< "player 2 select archetype (Paladin or Alchemist)"<<endl;
+    cout<< endl<<"player 2 select archetype (Paladin or Alchemist)"<<endl;
     while (true){
         cin >> ws;
         getline(cin, archetype2);
@@ -149,7 +152,7 @@ int main()
             archetype2 = "2";
             break;
         }
-        cout<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl<<endl;
+        else{cout<<endl<<"Invalid archetype try again";}
         }
     while (current.winner == '0') 
         {
@@ -175,8 +178,9 @@ int main()
                     moves += cmove;
                     cmove.clear();
                     break;}
-
-            }}
+                 else{cout<<endl<<"Invalid move, try again."<<endl;}
+            }
+       }
             
             current.display();
             if (current.p1 == true) {
@@ -238,6 +242,7 @@ int main()
                                 cin>>ws;
                                 getline(cin,s2);
                                 if(current.swap(s1,s2) == true){break;}
+                                
                             }
                         }
                         
@@ -296,6 +301,7 @@ int main()
         getline(cin,again);
         if (again == "Yes" ||again == "Y" ||again == "1"||again == "yes" ||again == "y")
         {
+            cout<<endl<<endl<<endl<<endl<<endl<<endl<<endl;
             break;
         }
         else
@@ -304,6 +310,7 @@ int main()
             {
                 playing = false;
             }
+            else{cout<<endl<<"invalid input try again";}
         }
         }
     }

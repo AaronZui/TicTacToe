@@ -22,6 +22,7 @@ void game::p2set(char s)
 }
 
 void game::display() {
+    cout<<endl<<endl<<endl<<endl<<endl<<endl<<endl;
     cout << "\t a \t b \t c" << endl;
     for (int i = 0; i < 3; i++) {
         cout << i + 1 << "\t";
