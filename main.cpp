@@ -6,8 +6,11 @@ using namespace std;
 
 int main() {
     cout << "Welcome to TicTacToe\n";
+    cout<< "If you would like to play battle or normal mode type 1, if you want to play adventure type 3";
+    string a;
+    getline(cin, a);
+    if(a == "1"){
     bool playing = true;
-
     while (playing) {
         game current;
 
@@ -16,8 +19,7 @@ int main() {
             cout << "\nChoose mode:\n";
             cout << "  1. Regular\n";
             cout << "  2. Battle\n";
-            cout << "  3. Adventure\n";
-            cout << "Enter 1, 2, or 3: ";
+            cout << "Enter 1 or 2: ";
             getline(cin >> ws, mode);
 
             if (mode == "1" || mode == "Regular" || mode == "regular" || mode == "r" || mode == "R") {
@@ -77,36 +79,6 @@ int main() {
                 playBattleGame(current, arch1, arch2);
                 break;
             }
-            else if(mode == "3" || mode == "Adventure" || mode == "adventure" || mode == "a" || mode == "A"){
-                
-                cout << "Player 1 choose symbol: ";
-                char s1;
-                cin >> ws;
-                cin >> s1;
-                current.p1set(s1);
-
-
-                string arch1;
-
-                while (true) {
-                    cout << "Player 1 choose archetype (Paladin or Alchemist): ";
-                    getline(cin >> ws, arch1);
-                    if (arch1 == "Paladin" || arch1 == "paladin" || arch1 == "1" || arch1 == "p" || arch1 == "P") {
-                        arch1 = "Paladin";
-                        break;
-                    }
-                    else if (arch1 == "Alchemist" || arch1 == "alchemist" || arch1 == "2" || arch1 == "a" || arch1 == "A") {
-                        arch1 = "Alchemist";
-                        break;
-                    }
-                    else {
-                        cout << "Invalid archetype. Please choose Paladin or Alchemist.\n";
-                    }
-                }
-
-                playAdventureGame(current, arch1, "Special");
-                break;
-            } 
             else{
                 cout << "Invalid mode selected. Please try again.\n";
             }
@@ -122,4 +94,7 @@ int main() {
 
     cout << "Thanks for playing!\n";
     return 0;
+}
+    else{playAdventureGame();}
+
 }
