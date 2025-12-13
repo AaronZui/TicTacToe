@@ -6,7 +6,7 @@ using namespace std;
 
 int main() {
     cout << "Welcome to TicTacToe\n";
-    cout<< "If you would like to play battle or normal mode type 1, if you want to play adventure type 3";
+    cout<< "If you would like to play battle or normal mode type 1, if you want to play adventure type 2";
     string a;
     getline(cin, a);
     if(a == "1"){
