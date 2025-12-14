@@ -846,7 +846,7 @@ int playAdventureGame() {
         cout << "THE BATTLE OF THE BEGINING\n";
         cout << "===================================\n\n";
         cout << "The man from the village had followed you, he knows what you are doing and he doesn't like it\n";
-        cout << "He intends to stop you befor you reach the stone.";
+        cout << "He intends to stop you before you reach the stone.";
         cout<<"\n(Enter to continue)\n";
         cin.get();
         cout << "\n\n";
