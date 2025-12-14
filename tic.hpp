@@ -32,6 +32,8 @@ public:
     bool flip(int m1, int m2);
     bool mirror(int m1, int m2);
     bool blind(int m1, int m2);
+    void bset(string input);
+
 };
 
 struct Enemy {

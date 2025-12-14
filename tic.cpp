@@ -272,14 +272,16 @@ void battleEnemy(Enemy e) {
                         if (valid.empty()) continue;
 
                         string mv = valid[rand() % valid.size()];
-                        g.set(mv);
+                        g.bset(mv);
                         cout << "  -> Strike " << (moveCount + 1) << " at " << mv << "!" << endl;
                         totalMoves++;
 
                         g.checkWin();
                         if (g.winner != '0') break;
                     }
+                    
                     usedSpecial = true;
+                    if (g.winner == '0') g.p1 = true;
                 }
                 else if (!e.special.empty() && abilityTriggers() && canSpecial) {
                     cout << e.name << " uses a special ability!" << endl;
@@ -403,6 +405,20 @@ void game::set(string input) {
     pboard[row][col] = mark;
 
     p1 = !p1;
+    counter++;
+}
+void game::bset(string input) {
+    int col, row;
+    if (tolower(input[0]) == 'a') col = 0;
+    else if (tolower(input[0]) == 'b') col = 1;
+    else col = 2;
+    row = (input[1] - '0') - 1;
+
+    char mark = p1 ? p1s : p2s;
+    char real = p1 ? 'X' : 'O';
+
+    board[row][col] = real;
+    pboard[row][col] = mark;
     counter++;
 }
 
@@ -607,7 +623,7 @@ int playAdventureGame() {
         cout << "\n========================================\n";
         cout << "  QUEST FOR THE OLDEST ROCK\n";
         cout << "========================================\n\n";
-        cout << "Welcome, brave adventurer! Before we begin, tell me your name: ";
+        cout << "Welcome, Before we begin, tell me your name: ";
 
         while (true) {
             getline(cin, pname);
@@ -659,10 +675,14 @@ int playAdventureGame() {
         cout << "Long ago in a far off town your story begins\n";
         cout << "You, " << pname << " the " << archetype << ", \n";
         cout << "had a crazy agrument with the towns #1 trouble maker he says the stone he has is the oldest there has ever been.\n\n";
-        
+        cout<<"\n(Enter to continue)\n";
+        cin.get();
         cout << "You know he is lying, there are some real old stones out there and you seen him pick it up.\n";
-        cout << "The gather you're life savings of 5 gold and head out to disprove this oaf.\n\n";
-        
+        cout << "The gather you're life savings of 5 gold and head out to disprove this oaf,\n";
+        cout<<" you head to the shop to see if there is anything that might help you.\n\n";
+        cout<<"\n(Enter to continue)\n";
+        cin.get();
+
         cout << "At the village shop, you see:\n";
         cout << "  1) Steel Helmet (+5 defense) - 5 gold\n";
         cout << "  2) Steel Sword (+5 attack) - 5 gold\n";
@@ -710,7 +730,8 @@ int playAdventureGame() {
         cout << "===============================\n\n";
         cout << "You start heading down the village path, and you see a rock that looks fairly old, it hasn't moved in forever so you pick it up.\n";
         cout << "It's not a rock, its a pebble, but not only is it a pebble, but an angry one at that, it was fine where it was but now its mad.\n\n";
-        
+        cout<<"\n(Enter to continue)\n";
+        cin.get();
         Enemy pebble;
         pebble.name = "angry pebble";
         pebble.health = 15;
@@ -736,23 +757,28 @@ int playAdventureGame() {
         cout << "\n=========================\n";
         cout << "THE STONE\n";
         cout << "=========================\n\n";
-        cout << "You continue down the path and you are attacked by one of the cobblestones\n\n";
+        cout << "You continue down the path and see something shiny, could this be...\n";
+        cout<<"A Shiny Stone appears, and it is not happy.\n\n";
+        cout<<"\n(Enter to continue)\n";
+        cin.get();
+        Enemy shiny;
+        shiny.name = "Shiny Stone";
+        shiny.health = 25;
+        shiny.attack = 8;
+        shiny.defense = 6;
         
-        Enemy Cobble;
-        Cobble.name = "Shiny Stone";
-        Cobble.health = 25;
-        Cobble.attack = 8;
-        Cobble.defense = 6;
-        
-        Cobble.special.push_back([](game& g, int m1, int m2) -> bool {
+        shiny.special.push_back([](game& g, int m1, int m2) -> bool {
             cout << "The Shiny Stone uses mirror;\n";
             return g.mirror(m1, m2);
         });
         
-        battleEnemy(Cobble);
+        battleEnemy(shiny);
         
         if (health > 0) {
-            cout << "\nYou destroy the stone before you are able to check how old it is but you're sure the man in the village had an older one\n";
+            cout << "\nYou destroy the stone before you are able to check how old it is\n";
+            cout<<"You will have to deal with the loss later cause adventure awaits\n";
+            cout<<"\n(Enter to continue)\n";
+            cin.get();
             currentArea = "2.1";
             save();
         }
@@ -796,18 +822,19 @@ int playAdventureGame() {
                 if (balance >= 12) {
                     balance -= 12;
                     defense += 5;
-                    cout << "\nYour defenses grow stronger!\n";
+                    cout << "\nYour hold the shield\n";
                 } else {
                     cout << "\nNot enough gold!\n";
                     continue;
                 }
             } else if (c == "4") {
-                cout << "\nYou bid the merchant farewell.\n";
+                cout << "\nYou continue you're path.\n";
+                break;
             } else {
                 cout << "Invalid choice.\n";
                 continue;
             }
-            break;
+            
         }
         
         currentArea = "3";
@@ -818,8 +845,12 @@ int playAdventureGame() {
         cout << "\n===================================\n";
         cout << "THE BATTLE OF THE BEGINING\n";
         cout << "===================================\n\n";
-        cout << "The man from the village had followed you, he knows what you are doing and he doesn;t like it\n";
+        cout << "The man from the village had followed you, he knows what you are doing and he doesn't like it\n";
+        cout << "He intends to stop you befor you reach the stone.";
+        cout<<"\n(Enter to continue)\n";
+        cin.get();
         cout << "\n\n";
+        
         
         Enemy man;
         man.name = "Village man";
@@ -910,10 +941,11 @@ int playAdventureGame() {
         cout << "====================\n\n";
         cout << "A miner sees you on entering and he knows you aren't supposed to be there.\n";
         cout << "You try to explain your mission but he looks at you like you are insane.\n\n";
-        
+        cout<<"\n(Enter to continue)\n";
+        cin.get();
         Enemy miner;
         miner.name = "miner";
-        miner.health = 40;
+        miner.health = 90;
         miner.attack = 14;
         miner.defense = 10;
         
@@ -931,7 +963,8 @@ int playAdventureGame() {
         
         if (health > 0) {
             cout << "\nThe miner is willing to listen to reason after the battle.\n";
-            cout << "You traverse deeper into the quarry.\n";
+            cout << "He takes you far into the quarry but he has a job to do so he will not acompany you any further.\n" ;
+            cout << "You traverse deeper into the quarry alone.\n";
             currentArea = "4.1";
             save();
         }
@@ -942,8 +975,7 @@ int playAdventureGame() {
         cout << "\n========================================\n";
         cout << "THE CAVES OF THE QUARRY\n";
         cout << "========================================\n\n";
-        cout << "At the bottom of the quarry there are two caves\n";
-        cout << ":\n\n";
+        cout << "At the bottom of the quarry there are two caves:\n";
         cout << "  1) The old mine (man made)\n";
         cout << "  2) The Skull Cavern (almost a pit, doesn't seem like much of a cave more of a death trap)\n\n";
 
@@ -968,7 +1000,7 @@ int playAdventureGame() {
         }
         while(currentArea == "5.1"){
             cout << "\n======================\n";
-            cout << "SKULL CAVERN\n";
+            cout << "THE CURSED SHOP\n";
             cout << "======================\n\n";
             cout<<"\n\nStrolling through the cavern you find a cursed shopkeeper\n";
             cout << "Current Gold: " << balance << "\n\n";
@@ -1009,7 +1041,7 @@ int playAdventureGame() {
                     continue;
                 }
             } else if (c == "4") {
-                cout << "\nYou bid the merchant farewell.\n";
+                cout << "\nYou continue you're path.\n";
                 break;
             } else {
                 cout << "Invalid choice.\n";
@@ -1029,7 +1061,12 @@ int playAdventureGame() {
             cout << "THE OLD MINES\n";
             cout << "======================\n\n";
             cout << "If you were an old rock this is probably where you'd be, the oldest rock must be up ahead.\n";
-            cout << "By some twist of fate a tyranosourus lies ahead gaurding a really old rock, he will not make this easy.\n";
+            cout << "You charge ahead prepared for anything but what you see...\n";
+            cout << "Not what you would expect, ahead lies a rock, the oldest you'd ever seen, but before the rock,\n";
+            cout << "The last T-Rex, this would be a cause for study but this is a time before science,\n";
+            cout << "It's protecting the rock you know what needs to happen, it's what your here for anyway.";
+            cout<<"\n(Enter to continue)\n";
+            cin.get();
             Enemy Rex;
             Rex.name = "T-Rex";
             Rex.health = 200;
@@ -1051,7 +1088,9 @@ int playAdventureGame() {
             battleEnemy(Rex);
         
             if (health > 0) {
-                cout << "\nYou have Bested the monstrosity, you take the rock from the cave and head home.\n";
+                cout << "\nYou did it, the T-Rex is extinct and you are not, your mission is complete.\n";
+                cout<<"\n(Enter to continue)\n";
+                cin.get();
                 currentArea = "end1";
                save();
         }
@@ -1059,11 +1098,14 @@ int playAdventureGame() {
         }
 
         while(currentArea =="end1"){
-            cout << "With your new rock the man from the village hangs his head at your arrival, everyone likes your new rock.\n";
-            cout << "While you have beat the man you their was greater glory out there in the cavern below but this will do for now.\n";
-            cout << "The End\n";
-            cout<<"Thanks for playing\n";
-            cout<< "Press enter to reset the game you can open it again if you would like to play more";
+            cout << "\n===========\n";
+            cout << "THE END\n";
+            cout << "===========\n\n";
+            cout << "You head out the mine, out the quarry and straight back to the village.\n";
+            cout << "The trouble maker will still not admit your rock is older.\n";
+            cout << "Everyone else in the village believes you, but he won't admit it no matter what\n";
+            cout << "Some people just don't listen but you know you've won\n";
+            cout << "(Press enter to reset and close the game)";
             cin.get();
             currentArea="Choosing";
             save();
@@ -1073,7 +1115,7 @@ int playAdventureGame() {
         while (currentArea == "6.1")
         {
             cout << "\n=========================\n";
-                cout << "THE CAVERN AHEAD\n";
+                cout << "THE SKULL CAVERN\n";
                 cout << "=========================\n\n";
             if (secret == false){
                 
@@ -1081,11 +1123,11 @@ int playAdventureGame() {
                 cout<< "To make it worse you can't climb out.\n";
                 cout<<"This is the bad ending\n";
                 cout<<"Thanks for playing\n";
-                cout<< "Press enter to reset the game you can open it again if you would like to play more";
+                cout<<"(Press enter to reset and close the game)";
                 cin.get();
                 currentArea="Choosing";
-    save();
-    return 0;
+                save();
+                return 0;
             }
             else{
                 cout<< "There is a door ahead that opens infront of you.\n";
@@ -1101,7 +1143,9 @@ while(currentArea == "7"){
     cout << "==========================\n\n";
     cout<< "An infinitely compact universe lies before you, the oldest rock ever one may say.\n";
     cout<< "What happens when an immovable object is acted on by an unstopable force?\n";
-    cout<< "Time to find out";
+    cout<< "Time to find out\n";
+    cout<<"(Press enter to continue)\n\n";
+    cin.get();
 if (defense < 70){
     defense = 70;
 }
@@ -1137,19 +1181,28 @@ if(defense > 100){
             return g.blind(m1, m2);
             });
     battleEnemy(Universe);
-
-}
-if (health > 0) {
+    if (health > 0) {
         cout << "\nYou have gained the strength to move the universe, you now have the oldest rock in your possession.\n";
-        cout<< "You won't make it back to the village because it is now part of your rock but you know you won\n";
+        cout << "You can't get back to village now, not till the universe starts expanding atleast.\n";
+        cout<<"(Press enter to continue)\n\n";
+        cin.get();
         currentArea = "end2";
                save();
         }   
-if (currentArea == "end2"){
-    cout<< "It's been a long journey but it is now time to rest.\n";
-    cout<< "after a few billion years of rest maybe you'll brag about your awesome stone to show off in the village\n";
-    cout<<"Thanks for playing\n";
-    cout<< "Press enter to reset the game you can open it again if you would like to play more";
+
+}
+
+while (currentArea == "end2"){
+    cout << "\n===========\n";
+    cout << "THE END\n";
+    cout << "===========\n\n";
+    cout << "After a few billion years pass you find yourself in a village with your stone in hand somehow.\n";
+    cout << "You've grown older but weirdly not by much, but that can't be that big a suprise with everything else\n";
+    cout << "You show off your rock constantly and people are amazed except for one young man.\n";
+    cout << "He will stop at nothing to find a rock older then yours\n";
+    cout << "And you will go to stop him in a bit.";
+    cout << "The End";
+    cout << "\n(Press enter to reset and close the game)";
     cin.get();
     currentArea="Choosing";
     save();
