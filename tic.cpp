@@ -65,38 +65,43 @@ void playBattleGame(game &current, const string &arch1, const string &arch2) {
              << " (" << curSym << ") ";
 
         if (canSpecial) {
-            cout << " choose action: (1) Place  (2) Special\n";
-            cout << "Enter choice: ";
-
+            cout << "choose action: (1) Place (2) Special\nEnter choice: ";
         } else {
-            cout << " Place only (special unavailable until 2 moves done)\n";
+            cout << "Place only (special unavailable until 2 moves done)\n";
         }
+
         string action;
-        if(canSpecial){
-        getline(cin >> ws, action);}
-        else {action = "1";}
+        if (canSpecial) {
+            getline(cin >> ws, action);
+        } else {
+            action = "1";
+        }
 
         if (action == "1" || action == "place" || action == "P" || action == "p") {
             cout << "Enter move (e.g. a1): ";
             string mv;
             getline(cin >> ws, mv);
 
-            if (!(mv.length()==2 &&
-                  (tolower(mv[0])=='a'||tolower(mv[0])=='b'||tolower(mv[0])=='c') &&
-                  (mv[1]=='1'||mv[1]=='2'||mv[1]=='3'))) {
-                cout << "Invalid move input. Try again.\n";
+            if (!(mv.length() == 2 &&
+                  (tolower(mv[0]) == 'a' || tolower(mv[0]) == 'b' || tolower(mv[0]) == 'c') &&
+                  (mv[1] == '1' || mv[1] == '2' || mv[1] == '3'))) {
+                cout << "Invalid move. Try again.\n";
                 continue;
             }
+
             current.set(mv);
             totalMoves++;
+
+            current.checkWin();
+            if (current.winner != '0') break;
         }
         else if (canSpecial && (action == "2" || action == "special" || action == "S" || action == "s")) {
             if (current.p1) {
                 if (arch1 == "Paladin") {
-                    cout << "Select space to move from: "<<endl;
+                    cout << "Select space to move from: ";
                     string f, t;
                     getline(cin >> ws, f);
-                    cout << "Select space to move to: "<<endl;
+                    cout << "Select space to move to: ";
                     getline(cin >> ws, t);
                     if (!current.move(f, t)) {
                         cout << "Invalid move. Try again.\n";
@@ -125,10 +130,10 @@ void playBattleGame(game &current, const string &arch1, const string &arch2) {
                         continue;
                     }
                 } else {
-                    cout << "Select first space to swap: \n";
+                    cout << "Select first space to swap: ";
                     string s1, s2;
                     getline(cin >> ws, s1);
-                    cout << "Select second space to swap: \n";
+                    cout << "Select second space to swap: ";
                     getline(cin >> ws, s2);
                     if (!current.swap(s1, s2)) {
                         cout << "Invalid swap. Try again.\n";
@@ -136,14 +141,15 @@ void playBattleGame(game &current, const string &arch1, const string &arch2) {
                     }
                 }
             }
+
+            current.checkWin();
+            if (current.winner != '0') break;
         }
         else {
             cout << "Invalid choice. Try again.\n";
             continue;
         }
-
-        current.checkWin();
-    }  
+    }
 
     current.display();
     if (current.winner == '-') {
@@ -155,6 +161,7 @@ void playBattleGame(game &current, const string &arch1, const string &arch2) {
 
 
 
+
 bool abilityTriggers() {
     return (rand() % 10) < 3;
 }
@@ -163,192 +170,177 @@ void battleEnemy(Enemy e) {
     game g;
     g.p1set(symbol);
     g.p2set(esym);
-    
+
     cout << endl << "\t=== The Battle Begins ===" << endl;
     cout << pname << " HP: " << health << " | " << e.name << " HP: " << e.health << endl << endl;
-    
+
     while (health > 0 && e.health > 0) {
         g.reset();
         int totalMoves = 0;
-        
+
         cout << "--- New Round ---" << endl;
-        
+
         while (g.winner == '0') {
             g.display();
             bool canSpecial = (totalMoves >= 2);
-            
+
             if (g.p1) {
-                char curSym = g.p1s;
-                cout << pname << " (" << curSym << ")";
-                
-                if (canSpecial) {
-                    cout << " choose action: (1) Place  (2) Special\n";
-                    cout << "Enter choice: ";
-                } else {
-                    cout << " (special unavailable until 2 moves)\n";
-                }
-                
+                cout << pname << " (" << g.p1s << ")";
                 string action;
+
                 if (canSpecial) {
+                    cout << " choose action: (1) Place  (2) Special\nEnter choice: ";
                     getline(cin >> ws, action);
                 } else {
+                    cout << " (special unavailable until 2 moves)\n";
                     action = "1";
                 }
-                
+
                 if (action == "1" || action == "place" || action == "P" || action == "p") {
                     cout << "Enter move: ";
                     string mv;
                     getline(cin >> ws, mv);
-                    
+
                     if (!(mv.length() == 2 &&
                           (tolower(mv[0]) == 'a' || tolower(mv[0]) == 'b' || tolower(mv[0]) == 'c') &&
                           (mv[1] == '1' || mv[1] == '2' || mv[1] == '3'))) {
                         cout << "Invalid move input. Try again.\n";
                         continue;
                     }
-                    
-                    int col = tolower(mv[0]) - 'a';
-                    int row = mv[1] - '1';
-                    
-                    if (g.getCell(row, col) != '-') {
+
+                    if (g.getCell(mv[1] - '1', tolower(mv[0]) - 'a') != '-') {
                         cout << "That space is already taken. Try again.\n";
                         continue;
                     }
-                    
+
                     g.set(mv);
                     totalMoves++;
+
+                    g.checkWin(); 
+                    if (g.winner != '0') break;
                 }
                 else if (canSpecial && (action == "2" || action == "special" || action == "S" || action == "s")) {
+                    bool applied = false;
+
                     if (archetype == "Paladin") {
                         cout << "Select space to move from: ";
                         string f, t;
                         getline(cin >> ws, f);
                         cout << "Select space to move to: ";
                         getline(cin >> ws, t);
-                        if (!g.move(f, t)) {
-                            cout << "Invalid move. Try again.\n";
-                            continue;
-                        }
+                        if (g.move(f, t)) applied = true;
                     } else {
                         cout << "Select first space to swap: ";
                         string s1, s2;
                         getline(cin >> ws, s1);
                         cout << "Select second space to swap: ";
                         getline(cin >> ws, s2);
-                        if (!g.swap(s1, s2)) {
-                            cout << "Invalid swap. Try again.\n";
-                            continue;
-                        }
+                        if (g.swap(s1, s2)) applied = true;
                     }
+
+                    if (!applied) {
+                        cout << "Move failed, try again.\n";
+                        continue;
+                    }
+                    
+                    g.checkWin();
+                    if (g.winner != '0') break;
                 }
                 else {
                     cout << "Invalid choice. Try again.\n";
                     continue;
                 }
-            }
-            else {
+            } else {
                 cout << e.name << " is thinking..." << endl;
-                
                 bool usedSpecial = false;
-                
+
                 if (e.bspecial && abilityTriggers() && canSpecial) {
                     cout << e.name << " uses Double Strike!" << endl;
-                    
                     for (int moveCount = 0; moveCount < 2; moveCount++) {
                         vector<string> moves;
-                        for (char c = 'a'; c <= 'c'; c++) {
-                            for (char r = '1'; r <= '3'; r++) {
+                        for (char c = 'a'; c <= 'c'; c++)
+                            for (char r = '1'; r <= '3'; r++)
                                 moves.push_back(string() + c + r);
-                            }
-                        }
-                        
+
                         vector<string> valid;
                         for (string m : moves) {
-                            int col = m[0] - 'a';
-                            int row = m[1] - '1';
-                            if (g.getCell(row, col) == '-') {
+                            if (g.getCell(m[1] - '1', m[0] - 'a') == '-') {
                                 valid.push_back(m);
                             }
                         }
-                        
-                        if (!valid.empty()) {
-                            string mv = valid[rand() % valid.size()];
-                            g.set(mv);
-                            cout << "  -> Strike " << (moveCount + 1) << " at " << mv << "!" << endl;
-                        }
+
+                        if (valid.empty()) continue;
+
+                        string mv = valid[rand() % valid.size()];
+                        g.set(mv);
+                        cout << "  -> Strike " << (moveCount + 1) << " at " << mv << "!" << endl;
+                        totalMoves++;
+
+                        g.checkWin();
+                        if (g.winner != '0') break;
                     }
                     usedSpecial = true;
                 }
-
                 else if (!e.special.empty() && abilityTriggers() && canSpecial) {
                     cout << e.name << " uses a special ability!" << endl;
                     int i = rand() % e.special.size();
                     e.special[i](g, rand() % 3, rand() % 3);
                     usedSpecial = true;
+                    g.checkWin();
                 }
-                
+
                 if (!usedSpecial) {
                     vector<string> moves;
-                    for (char c = 'a'; c <= 'c'; c++) {
-                        for (char r = '1'; r <= '3'; r++) {
+                    for (char c = 'a'; c <= 'c'; c++)
+                        for (char r = '1'; r <= '3'; r++)
                             moves.push_back(string() + c + r);
-                        }
-                    }
-                    
+
                     vector<string> valid;
                     for (string m : moves) {
-                        int col = m[0] - 'a';
-                        int row = m[1] - '1';
-                        if (g.getCell(row, col) == '-') {
-                            valid.push_back(m);
-                        }
+                        if (g.getCell(m[1] - '1', m[0] - 'a') == '-') valid.push_back(m);
                     }
-                    
+
                     if (!valid.empty()) {
                         string mv = valid[rand() % valid.size()];
                         g.set(mv);
                         cout << e.name << " places at " << mv << "\n";
                         totalMoves++;
+                        g.checkWin();
                     }
                 }
             }
-            
-            g.checkWin();
         }
-        
+
         g.display();
-        
-        if (g.winner == symbol) {
+
+        if (g.winner == 'X') {
             int dmg = max(0, attack - e.defense);
             e.health -= dmg;
-            cout << "\n" << pname << " wins the round! You deal " << dmg 
-                 << " damage to " << e.name << "!\n";
+            cout << "\n" << pname << " wins the round! You deal " << dmg << " damage to " << e.name << "!\n";
         }
-        else if (g.winner == esym) {
+        else if (g.winner == 'O') {
             int dmg = max(0, e.attack - defense);
             health -= dmg;
-            cout << "\n" << e.name << " wins the round and deals " 
-                 << dmg << " damage to you!\n";
+            cout << "\n" << e.name << " wins the round and deals " << dmg << " damage to you!\n";
         }
         else {
             cout << "\nThe round was a draw. No damage dealt.\n";
         }
-        
-        cout << "\n" << pname << " HP: " << health 
-             << " | " << e.name << " HP: " << e.health << "\n\n";
+
+        cout << "\n" << pname << " HP: " << health << " | " << e.name << " HP: " << e.health << "\n\n";
     }
-    
+
     if (health <= 0) {
         cout << "\n*** You were defeated by " << e.name << "! ***\n";
-        cout << "Your journey ends here...\n";
         currentArea = "Choosing";
     } else {
         cout << "\n*** You defeated " << e.name << "! ***\n";
-        int goldReward = e.attack + e.defense;
-        balance += goldReward;
-        cout << "Gold gained: " << goldReward << "\n";
+        balance += e.attack + e.defense;
+        cout << "Gold gained: " << (e.attack + e.defense) << "\n";
     }
 }
+
+
 
 game::game() {
     reset();
@@ -464,7 +456,8 @@ bool game::move(string m1, string m2) {
 
     board[r1][c1] = '-';
     pboard[r1][c1] = '-';
-
+    p1 = !p1;
+    checkWin();
     return true;
 }
 
@@ -476,19 +469,35 @@ bool game::blind(int m1, int m2) {
             }
         }
     }
+    p1 = !p1;
     return true;
 }
 
 bool game::flip(int m1, int m2) {
     rotate(m1, m2);
     rotate(m1, m2);
+    p1 = !p1;
     return true;
 }
 
-bool game::swapsym(int m1, int m2) {
-    char temp = symbol;
-    symbol = esym;
-    esym = temp;
+bool game::mirror(int m1, int m2) {
+    char temp[3][3];
+    char ptemp[3][3];
+    
+    for (int r = 0; r < 3; r++) {
+        for (int c = 0; c < 3; c++) {
+            temp[r][2 - c] = board[r][c];
+            ptemp[r][2 - c] = pboard[r][c];
+        }
+    }
+    
+    for (int r = 0; r < 3; r++) {
+        for (int c = 0; c < 3; c++) {
+            board[r][c] = temp[r][c];
+            pboard[r][c] = ptemp[r][c];
+        }
+    }
+    p1 = !p1;
     return true;
 }
 
@@ -509,7 +518,7 @@ bool game::rotate(int m1, int m2) {
             pboard[r][c] = ptemp[r][c];
         }
     }
-    
+    p1 = !p1;
     return true;
 }
 
@@ -520,6 +529,7 @@ bool game::smash(int m1, int m2) {
         pboard[m1][m2] = esym;
         board[m1][m2] = 'O';
         p1 = !p1;
+        checkWin();
         return true;
     }
     return false;
@@ -538,27 +548,22 @@ void game::reset() {
 
 void save() {
     ofstream save("save.txt", ios::out | ios::trunc);
-    if (!save) {
-        cout << "Progress failed to save...\n";
-        return;
-    }
-
     save << currentArea << endl;
     save << pname << endl;
     save << archetype << endl;
+    save << symbol << endl;
+    save << esym << endl;
     save << health << endl;
     save << defense << endl;
     save << attack << endl;
     save << balance << endl;
     save << (secret ? 1 : 0) << endl;
+    save.close();
 
-    cout << "Game saved.\n";
 }
-
 void load() {
     ifstream save("save.txt");
     if (!save) {
-        cout << "No save found — starting new game.\n";
         currentArea = "Choosing";
         return;
     }
@@ -567,6 +572,12 @@ void load() {
     getline(save, currentArea);
     getline(save, pname);
     getline(save, archetype);
+
+    if (!getline(save, temp)) { currentArea = "Choosing"; return; }
+    if (!temp.empty()) symbol = temp[0];
+
+    if (!getline(save, temp)) { currentArea = "Choosing"; return; }
+    if (!temp.empty()) esym = temp[0];
 
     if (!getline(save, temp)) return;
     health = stoi(temp);
@@ -582,8 +593,6 @@ void load() {
 
     if (!getline(save, temp)) return;
     secret = (stoi(temp) != 0);
-
-    cout << "Save loaded. Welcome back, " << pname << "!\n";
 }
 
 int playAdventureGame() {
@@ -697,7 +706,7 @@ int playAdventureGame() {
 
     if (currentArea == "1") {
         cout << "\n===============================\n";
-        cout << "THE Village path\n";
+        cout << "THE Village PATH\n";
         cout << "===============================\n\n";
         cout << "You start heading down the village path, and you see a rock that looks fairly old, it hasn't moved in forever so you pick it up.\n";
         cout << "It's not a rock, its a pebble, but not only is it a pebble, but an angry one at that, it was fine where it was but now its mad.\n\n";
@@ -730,14 +739,14 @@ int playAdventureGame() {
         cout << "You continue down the path and you are attacked by one of the cobblestones\n\n";
         
         Enemy Cobble;
-        Cobble.name = "Cobble Stone";
+        Cobble.name = "Shiny Stone";
         Cobble.health = 25;
         Cobble.attack = 8;
         Cobble.defense = 6;
         
         Cobble.special.push_back([](game& g, int m1, int m2) -> bool {
-            cout << "The \n";
-            return g.swapsym(m1, m2);
+            cout << "The Shiny Stone uses mirror;\n";
+            return g.mirror(m1, m2);
         });
         
         battleEnemy(Cobble);
@@ -959,9 +968,9 @@ int playAdventureGame() {
         }
         while(currentArea == "5.1"){
             cout << "\n======================\n";
-            cout << "Skull Cavern\n";
+            cout << "SKULL CAVERN\n";
             cout << "======================\n\n";
-            cout<<"\n\nStrolling through the abyss you find a cursed shopkeeper\n";
+            cout<<"\n\nStrolling through the cavern you find a cursed shopkeeper\n";
             cout << "Current Gold: " << balance << "\n\n";
             cout << "The merchant offers:\n";
             cout << "  1) Greatest Health Potion (+100 HP) - 50 gold\n";
@@ -1050,19 +1059,17 @@ int playAdventureGame() {
         }
 
         while(currentArea =="end1"){
-             cout << "With your new rock the man from the village hangs his head at your arrival, everyone likes your new rock.\n";
-             cout << "While you have beat the man you their was greater glory out there in the cavern below but this will do for now.\n";
-             cout << "The end, would you like to play again?\n1) Yes \n2) No\n";
-             string c;
-             if(c == "1" || c == "y"|| c == "yes"|| c == "Y"|| c == "Yes"){
-             cout<<"Good luck\n";
-             currentArea = "Choosing";
-             save();}
-             else {cout<<"thanks for playing";
+            cout << "With your new rock the man from the village hangs his head at your arrival, everyone likes your new rock.\n";
+            cout << "While you have beat the man you their was greater glory out there in the cavern below but this will do for now.\n";
+            cout << "The End\n";
+            cout<<"Thanks for playing\n";
+            cout<< "Press enter to reset the game you can open it again if you would like to play more";
+            cin.get();
+            currentArea="Choosing";
+            save();
             return 0;
             }
 
-        }
         while (currentArea == "6.1")
         {
             cout << "\n=========================\n";
@@ -1073,9 +1080,12 @@ int playAdventureGame() {
                 cout<< "It's been a long journey but when you get into the cavern there is a door that is closed\n";
                 cout<< "To make it worse you can't climb out.\n";
                 cout<<"This is the bad ending\n";
-                currentArea = "Choosing";
-                save();
-                return 0;
+                cout<<"Thanks for playing\n";
+                cout<< "Press enter to reset the game you can open it again if you would like to play more";
+                cin.get();
+                currentArea="Choosing";
+    save();
+    return 0;
             }
             else{
                 cout<< "There is a door ahead that opens infront of you.\n";
@@ -1115,8 +1125,8 @@ if(defense > 100){
             return g.rotate(m1, m2);
             });
     Universe.special.push_back([](game& g, int m1, int m2) -> bool {
-            cout << "The Universe turns reality\n";
-            return g.rotate(m1, m2);
+            cout << "The Universe reflects reality\n";
+            return g.mirror(m1, m2);
             });
     Universe.special.push_back([](game& g, int m1, int m2) -> bool {
             cout << "The Universe smashes reality\n";
@@ -1138,17 +1148,12 @@ if (health > 0) {
 if (currentArea == "end2"){
     cout<< "It's been a long journey but it is now time to rest.\n";
     cout<< "after a few billion years of rest maybe you'll brag about your awesome stone to show off in the village\n";
-    cout<<"thanks for playing\n";
-    cout<<"Would you like to play again\n 1) Yes \n2) No";
-    string s;
-    getline(cin, s);
-    if(s == "yes" || s == "Yes"|| s == "y"|| s == "Y"|| s == "1"){cout<<"Have fun\n";
+    cout<<"Thanks for playing\n";
+    cout<< "Press enter to reset the game you can open it again if you would like to play more";
+    cin.get();
     currentArea="Choosing";
-    save();}
-    else{cout<< "Goodbye";
+    save();
     return 0;}
-}
-        
 }
 
 
