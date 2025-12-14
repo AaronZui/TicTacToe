@@ -706,7 +706,7 @@ int playAdventureGame() {
 
     if (currentArea == "1") {
         cout << "\n===============================\n";
-        cout << "THE Village PATH\n";
+        cout << "THE VILLAGE PATH\n";
         cout << "===============================\n\n";
         cout << "You start heading down the village path, and you see a rock that looks fairly old, it hasn't moved in forever so you pick it up.\n";
         cout << "It's not a rock, its a pebble, but not only is it a pebble, but an angry one at that, it was fine where it was but now its mad.\n\n";
